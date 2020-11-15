@@ -14,17 +14,17 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.foodietoronto.R;
 
-public class DashboardFragment extends Fragment {
+public class SavedPostsFragment extends Fragment {
 
-    private DashboardViewModel dashboardViewModel;
+    private SavedPostsViewModel savedPostsViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        dashboardViewModel =
-                ViewModelProviders.of(this).get(DashboardViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        savedPostsViewModel =
+                ViewModelProviders.of(this).get(SavedPostsViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_savedposts, container, false);
         final TextView textView = root.findViewById(R.id.text_dashboard);
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        savedPostsViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1027022751231",
+    "firebase_url": "https://foodietoronto-21a4e.firebaseio.com",
+    "project_id": "foodietoronto-21a4e",
+    "storage_bucket": "foodietoronto-21a4e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1027022751231:android:129fb9b7b8f44b527fd3ca",
+        "android_client_info": {
+          "package_name": "com.example.foodietoronto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1027022751231-7hvnupk7rgv70d2v3vi0fdsukmbjd640.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.foodietoronto",
+            "certificate_hash": "a7400f3da27a69cd70e9a3728b4f9d1a62ef834c"
+          }
+        },
+        {
+          "client_id": "1027022751231-pocfn1l1ok4ck1bkns6p92sg9jshaokl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9CTGNbLpe5bYcJp3Caq71QW5QthyNsYU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1027022751231-pocfn1l1ok4ck1bkns6p92sg9jshaokl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

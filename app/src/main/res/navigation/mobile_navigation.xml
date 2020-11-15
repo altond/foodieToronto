@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.foodietoronto.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        android:name="com.example.foodietoronto.ui.home.FeedFragment"
+        android:label="@string/title_feed"
+        tools:layout="@layout/fragment_feed" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.example.foodietoronto.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:name="com.example.foodietoronto.ui.dashboard.SavedPostsFragment"
+        android:label="@string/title_savedposts"
+        tools:layout="@layout/fragment_savedposts" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.example.foodietoronto.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:name="com.example.foodietoronto.ui.notifications.CreatePostFragment"
+        android:label="@string/title_createpost"
+        tools:layout="@layout/fragment_createpost" />
 </navigation>
