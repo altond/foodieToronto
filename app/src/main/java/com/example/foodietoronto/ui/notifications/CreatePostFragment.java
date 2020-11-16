@@ -41,7 +41,13 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.foodietoronto.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.internal.$Gson$Preconditions;
 
 import org.json.JSONObject;
@@ -56,6 +62,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -65,11 +72,11 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     private static final int CAMERA_PERM_CODE =101;
     public static final int CAMERA_REQUEST_CODE = 102;
     private CreatePostViewModel createPostViewModel;
-    private ImageView img;
     public static final String KEY_User_Document1 = "doc1";
     private String Document_img1="";
     String currentPhotoPath;
     private Bitmap mImageBitmap;
+    private String imgURL;
 
     private static final String TAG = "CreatePostFragment";
     private static final String KEY_ITEMNAME = "itemname";
@@ -82,8 +89,12 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     private EditText editrestname;
     private EditText editprice;
     private EditText editloc;
+    private ImageView img;
+    private Uri selectedImage;
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db;
+    private FirebaseStorage imgdb;
+    private StorageReference ref;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -98,68 +109,67 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
                 textView.setText(s);
             }
         });
+        db = FirebaseFirestore.getInstance();
+        imgdb = FirebaseStorage.getInstance();
+        ref = imgdb.getReference();
 
         edititemname = root.findViewById(R.id.editTextFoodName);
         editrestname = root.findViewById(R.id.editTextPlaceName);
         editprice = root.findViewById(R.id.editTextPrice);
         editloc = root.findViewById(R.id.editTextAddress);
+        img = root.findViewById(R.id.imageUpload);
 
         Button submitBtn = (Button) root.findViewById(R.id.buttonSubmit);
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String itemname = edititemname.getText().toString();
-                String restname = editrestname.getText().toString();
-                String price = editprice.getText().toString();
-                String loc = editloc.getText().toString();
-
-                Map<String,Object> post = new HashMap<>();
-                post.put(KEY_ITEMNAME,itemname);
-                post.put(KEY_RESTNAME,restname);
-                post.put(KEY_PRICE,price);
-                post.put(KEY_LOC,loc);
-
-                db.collection("Posts").document("first post").set(post)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Toast.makeText(getContext(), "Post Uploaded!", Toast.LENGTH_LONG).show();
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(getContext(), "Error!", Toast.LENGTH_LONG).show();
-                                Log.d(TAG, e.toString());
-                            }
-                        });
+                savePost();
             }
         });
 
-        img = (ImageView) root.findViewById(R.id.imageUpload);
-        img.setOnClickListener(this);
-        //Button upload = (Button) root.findViewById(R.id.buttonUpload);
-        //upload.setOnClickListener(this);
+        //img = (ImageView) root.findViewById(R.id.imageUpload);
+        //img.setOnClickListener(this);
+
+        Button upload = (Button) root.findViewById(R.id.buttonUpload);
+        upload.setOnClickListener(this);
 
         return root;
     }
 
-    public void savePost(View v)    {
+    public void savePost()    {
         String itemname = edititemname.getText().toString();
         String restname = editrestname.getText().toString();
         String price = editprice.getText().toString();
         String loc = editloc.getText().toString();
+        String imgrefID = UUID.randomUUID().toString();
 
         Map<String,Object> post = new HashMap<>();
         post.put(KEY_ITEMNAME,itemname);
         post.put(KEY_RESTNAME,restname);
         post.put(KEY_PRICE,price);
         post.put(KEY_LOC,loc);
+        post.put(KEY_IMG,imgrefID);
 
-        db.collection("Posts").document("").set(post)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+
+        StorageReference reference = ref.child("images/" + imgrefID);
+        reference.putFile(selectedImage)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
-                    public void onSuccess(Void aVoid) {
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(), "Image Upload Failed!", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+        db.collection("Posts").add(post)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
                         Toast.makeText(getContext(), "Post Uploaded!", Toast.LENGTH_LONG).show();
                     }
                 })
@@ -278,7 +288,7 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
                 getActivity().sendBroadcast(mediaScanIntent);
 
             } else if (requestCode == 2) {
-                Uri selectedImage = data.getData();
+                selectedImage = data.getData();
                 Toast.makeText(getContext(), selectedImage.toString(), Toast.LENGTH_LONG).show();
                 img.setImageURI(selectedImage);
             }
