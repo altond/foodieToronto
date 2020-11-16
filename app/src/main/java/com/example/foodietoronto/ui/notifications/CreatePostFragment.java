@@ -153,7 +153,7 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     public void savePost()    {
         String itemname = edititemname.getText().toString();
         String restname = editrestname.getText().toString();
-        String price = editprice.getText().toString();
+        Double price = Double.parseDouble(editprice.getText().toString());
         String loc = editloc.getText().toString();
         String imgrefID = UUID.randomUUID().toString();
 

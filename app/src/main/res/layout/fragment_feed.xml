@@ -8,6 +8,27 @@
     android:orientation="vertical"
     tools:context=".ui.home.FeedFragment">
 
+    <Button
+        android:id="@+id/buttonDelete"
+        android:layout_width="460dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:text="Delete Post" />
+
+    <Button
+        android:id="@+id/buttonSortLowtoHigh"
+        android:layout_width="460dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:text="Sort By Price: Low to High" />
+
+    <Button
+        android:id="@+id/buttonSortHightoLow"
+        android:layout_width="450dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:text="Sort By Price: High to Low" />
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
