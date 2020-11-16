@@ -44,10 +44,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ServerTimestamp;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.firestore.v1.DocumentTransform;
 import com.google.gson.internal.$Gson$Preconditions;
 
 import org.json.JSONObject;
@@ -58,6 +60,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -84,6 +87,7 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     private static final String KEY_PRICE = "price";
     private static final String KEY_LOC = "loc";
     private static final String KEY_IMG = "img";
+    private static final String KEY_TIMESTAMP = "time posted";
 
     private EditText edititemname;
     private EditText editrestname;
@@ -136,6 +140,16 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         return root;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
     public void savePost()    {
         String itemname = edititemname.getText().toString();
         String restname = editrestname.getText().toString();
@@ -143,12 +157,18 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         String loc = editloc.getText().toString();
         String imgrefID = UUID.randomUUID().toString();
 
+        if (itemname == null || restname == null ||price == null ||loc == null ||selectedImage == null) {
+            Toast.makeText(getContext(), "Please make sure all fields are filled out!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         Map<String,Object> post = new HashMap<>();
         post.put(KEY_ITEMNAME,itemname);
         post.put(KEY_RESTNAME,restname);
         post.put(KEY_PRICE,price);
         post.put(KEY_LOC,loc);
         post.put(KEY_IMG,imgrefID);
+        //post.put(KEY_TIMESTAMP, Timestamp.v);
 
 
         StorageReference reference = ref.child("images/" + imgrefID);

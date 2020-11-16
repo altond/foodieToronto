@@ -6,14 +6,16 @@ import androidx.lifecycle.ViewModel;
 
 public class FeedViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
+    private MutableLiveData<String> posts;
 
     public FeedViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is feed fragment");
+        posts = new MutableLiveData<>();
+        //mText.setValue("This is feed fragment");
     }
 
     public LiveData<String> getText() {
-        return mText;
+        return posts;
     }
+
+
 }
