@@ -84,6 +84,7 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     String currentPhotoPath;
     private Bitmap mImageBitmap;
     private String imgURL;
+    public int REDIRECT_FLAG = 0;
 
     private static final String TAG = "CreatePostFragment";
     private static final String KEY_ITEMNAME = "itemname";
@@ -137,10 +138,16 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                REDIRECT_FLAG = 0;
                 savePost();
-                Intent intent = new Intent();
-                intent.setClass(getActivity(), MainActivity.class);
-                getActivity().startActivity(intent);
+                if (REDIRECT_FLAG == 1) {
+                    return;
+                }
+                else {
+                    Intent intent = new Intent();
+                    intent.setClass(getActivity(), MainActivity.class);
+                    getActivity().startActivity(intent);
+                }
             }
         });
 
@@ -168,6 +175,7 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         restname = editrestname.getText().toString();
         if (editprice.getText().toString() == null || editprice.getText().toString().equals("")) {
             Toast.makeText(getContext(), "Please make sure all fields are filled out!", Toast.LENGTH_LONG).show();
+            REDIRECT_FLAG = 1;
             return;
         }
         else    {
@@ -178,10 +186,12 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
 
         if (itemname == null || restname == null ||price == null ||loc == null) {
             Toast.makeText(getContext(), "Please make sure all fields are filled out!", Toast.LENGTH_LONG).show();
+            REDIRECT_FLAG = 1;
             return;
         }
         if (selectedImage == null)  {
             Toast.makeText(getContext(), "Please upload a picture!", Toast.LENGTH_LONG).show();
+            REDIRECT_FLAG = 1;
             return;
         }
 
