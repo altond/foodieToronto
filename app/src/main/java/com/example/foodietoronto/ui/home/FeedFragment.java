@@ -40,17 +40,19 @@ import com.google.firebase.storage.StorageReference;
 import org.w3c.dom.Text;
 
 import java.lang.reflect.Array;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
 
 public class FeedFragment extends Fragment {
 
     private FeedViewModel homeViewModel;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseStorage imgdb = FirebaseStorage.getInstance();
     private StorageReference imgref = imgdb.getReference();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference posts = db.collection("Posts/");
     //private DocumentReference postsref = db.document("Posts");
     private ListenerRegistration registration;
@@ -89,7 +91,7 @@ public class FeedFragment extends Fragment {
         });*/
         //fillLists();
         mRecyclerView = root.findViewById(R.id.recyclerview);
-        mAdapter = new WordListAdapter(getContext(),items,restnames,prices,locations,imgIDs);
+        mAdapter = new WordListAdapter(getContext(),items,restnames,prices,locations,imgIDs,postList);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -171,12 +173,20 @@ public class FeedFragment extends Fragment {
                     return;
                 }
                 String data = "";
+                items.clear();
+                restnames.clear();
+                prices.clear();
+                locations.clear();
+                imgIDs.clear();
+                postList.clear();
 
                 for(QueryDocumentSnapshot post : value) {
                     String id = post.getId();
                     String itemname = post.get("itemname").toString();
                     String restname = post.get("restname").toString();
-                    String price = post.get("price").toString();
+                    Locale locale = new Locale("en","US");
+                    NumberFormat format = NumberFormat.getCurrencyInstance(locale);
+                    String price = format.format(post.get("price"));
                     String location = post.get("loc").toString();
                     String imgID = "";
                     if (post.get("img") != null) {
@@ -225,13 +235,16 @@ public class FeedFragment extends Fragment {
                         prices.clear();
                         locations.clear();
                         imgIDs.clear();
+                        postList.clear();
 
 
                         for(QueryDocumentSnapshot post : queryDocumentSnapshots) {
                             String id = post.getId();
                             String itemname = post.get("itemname").toString();
                             String restname = post.get("restname").toString();
-                            String price = post.get("price").toString();
+                            Locale locale = new Locale("en","US");
+                            NumberFormat format = NumberFormat.getCurrencyInstance(locale);
+                            String price = format.format(post.get("price"));
                             String location = post.get("loc").toString();
                             String imgID = "";
                             if (post.get("img") != null) {
@@ -279,19 +292,26 @@ public class FeedFragment extends Fragment {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         String data = "";
+                        items.clear();
+                        restnames.clear();
+                        prices.clear();
+                        locations.clear();
+                        imgIDs.clear();
+                        postList.clear();
+
 
                         for(QueryDocumentSnapshot post : queryDocumentSnapshots) {
                             String id = post.getId();
                             String itemname = post.get("itemname").toString();
                             String restname = post.get("restname").toString();
-                            String price = post.get("price").toString();
+                            Locale locale = new Locale("en","US");
+                            NumberFormat format = NumberFormat.getCurrencyInstance(locale);
+                            String price = format.format(post.get("price"));
                             String location = post.get("loc").toString();
                             String imgID = "";
                             if (post.get("img") != null) {
                                 imgID = post.get("img").toString();
                             }
-
-
 
                             ArrayList<String> temp = new ArrayList<>();
                             temp.add(id); temp.add(imgID);
@@ -302,8 +322,18 @@ public class FeedFragment extends Fragment {
                                     + "\nPrice: " + price
                                     + "\nLocation: " + location
                                     + "\nImgID: " + imgID + "\n\n";
+
+                            items.addLast(itemname);
+                            restnames.addLast(restname);
+                            prices.addLast(price);
+                            locations.addLast(location);
+                            imgIDs.addLast(imgID);
                         }
-                        feed.setText(data);
+                        //feed.setText(items.toString());
+                        //Toast.makeText(getContext(), String.valueOf(items.size()), Toast.LENGTH_LONG).show();
+                        mAdapter.notifyDataSetChanged(); //= new WordListAdapter(getContext(),items,restnames,prices,locations,imgIDs);
+                        //mRecyclerView.setAdapter(mAdapter);
+                        //mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

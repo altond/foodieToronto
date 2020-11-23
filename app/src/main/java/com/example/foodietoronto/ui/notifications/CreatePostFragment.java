@@ -35,10 +35,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.foodietoronto.MainActivity;
 import com.example.foodietoronto.R;
+import com.example.foodietoronto.ui.home.FeedFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -112,13 +116,13 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         createPostViewModel =
                 ViewModelProviders.of(this).get(CreatePostViewModel.class);
         View root = inflater.inflate(R.layout.fragment_createpost, container, false);
-        final TextView textView = root.findViewById(R.id.text_notifications);
+        /*final TextView textView = root.findViewById(R.id.text_notifications);
         createPostViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
             }
-        });
+        });*/
         db = FirebaseFirestore.getInstance();
         imgdb = FirebaseStorage.getInstance();
         ref = imgdb.getReference();
@@ -134,6 +138,9 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
             @Override
             public void onClick(View v) {
                 savePost();
+                Intent intent = new Intent();
+                intent.setClass(getActivity(), MainActivity.class);
+                getActivity().startActivity(intent);
             }
         });
 
@@ -224,7 +231,7 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     }
 
     private void selectImage() {
-        final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };
+        final CharSequence[] options = {"Choose from Gallery","Cancel" };
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Add Photo!");
         builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -325,7 +332,7 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
 
             } else if (requestCode == 2) {
                 selectedImage = data.getData();
-                Toast.makeText(getContext(), selectedImage.toString(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getContext(), selectedImage.toString(), Toast.LENGTH_LONG).show();
                 img.setImageURI(selectedImage);
             }
         }
