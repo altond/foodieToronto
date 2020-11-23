@@ -96,6 +96,12 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     private ImageView img;
     private Uri selectedImage;
 
+    private String itemname;
+    private String restname;
+    private Double price;
+    private String loc;
+    private String imgrefID;
+
     private FirebaseFirestore db;
     private FirebaseStorage imgdb;
     private StorageReference ref;
@@ -151,14 +157,24 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     }
 
     public void savePost()    {
-        String itemname = edititemname.getText().toString();
-        String restname = editrestname.getText().toString();
-        Double price = Double.parseDouble(editprice.getText().toString());
-        String loc = editloc.getText().toString();
-        String imgrefID = UUID.randomUUID().toString();
-
-        if (itemname == null || restname == null ||price == null ||loc == null ||selectedImage == null) {
+        itemname = edititemname.getText().toString();
+        restname = editrestname.getText().toString();
+        if (editprice.getText().toString() == null || editprice.getText().toString().equals("")) {
             Toast.makeText(getContext(), "Please make sure all fields are filled out!", Toast.LENGTH_LONG).show();
+            return;
+        }
+        else    {
+            price = Double.parseDouble(editprice.getText().toString());
+        }
+        loc = editloc.getText().toString();
+        imgrefID = UUID.randomUUID().toString();
+
+        if (itemname == null || restname == null ||price == null ||loc == null) {
+            Toast.makeText(getContext(), "Please make sure all fields are filled out!", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (selectedImage == null)  {
+            Toast.makeText(getContext(), "Please upload a picture!", Toast.LENGTH_LONG).show();
             return;
         }
 

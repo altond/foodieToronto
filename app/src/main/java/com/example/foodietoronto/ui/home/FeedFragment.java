@@ -15,10 +15,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foodietoronto.R;
+import com.example.foodietoronto.WordListAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -37,6 +42,7 @@ import org.w3c.dom.Text;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class FeedFragment extends Fragment {
@@ -57,6 +63,13 @@ public class FeedFragment extends Fragment {
 
     //private ArrayList<Map<String,String>> postList  = new ArrayList<>();
     private ArrayList<ArrayList<String>> postList  = new ArrayList<>();
+    private LinkedList<String> items = new LinkedList<>();
+    private LinkedList<String> restnames = new LinkedList<>();
+    private LinkedList<String> prices = new LinkedList<>();
+    private LinkedList<String> locations = new LinkedList<>();
+    private LinkedList<String> imgIDs = new LinkedList<>();
+    private RecyclerView mRecyclerView;
+    private WordListAdapter mAdapter;
 
     private TextView feed;
     private Button delete;
@@ -74,15 +87,23 @@ public class FeedFragment extends Fragment {
                 textView.setText(s);
             }
         });*/
+        //fillLists();
+        mRecyclerView = root.findViewById(R.id.recyclerview);
+        mAdapter = new WordListAdapter(getContext(),items,restnames,prices,locations,imgIDs);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        feed = root.findViewById(R.id.textItem);
-        delete = root.findViewById(R.id.buttonDelete);
+
+        //feed = root.findViewById(R.id.textItem);
+        //feed.setText(String.valueOf(items.size()));
+
+        /*delete = root.findViewById(R.id.buttonDelete);
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 deletePost();
             }
-        });
+        });*/
         sortpricelowtohigh = root.findViewById(R.id.buttonSortLowtoHigh);
         sortpricelowtohigh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,9 +123,46 @@ public class FeedFragment extends Fragment {
         return root;
     }
 
+    public void fillLists() {
+        posts.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot post : task.getResult()) {
+                                String id = post.getId();
+                                String itemname = post.get("itemname").toString();
+                                String restname = post.get("restname").toString();
+                                String price = post.get("price").toString();
+                                String location = post.get("loc").toString();
+                                String imgID = "";
+                                if (post.get("img") != null) {
+                                    imgID = post.get("img").toString();
+                                }
+
+                                ArrayList<String> temp = new ArrayList<>();
+                                temp.add(id); temp.add(imgID);
+                                postList.add(temp);
+
+                                items.addLast(itemname);
+                                restnames.addLast(restname);
+                                prices.addLast(price);
+                                locations.addLast(location);
+                                imgIDs.addLast(imgID);
+                            }
+                        }
+                        else    {
+                            Toast.makeText(getContext(), "Error filling lists from db!", Toast.LENGTH_LONG).show();
+                        }
+                        Toast.makeText(getContext(), String.valueOf(items.size()), Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
     @Override
     public void onStart() {
         super.onStart();
+
 
         registration = posts.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -134,10 +192,23 @@ public class FeedFragment extends Fragment {
                             + "\nPrice: " + price
                             + "\nLocation: " + location
                             + "\nImgID: " + imgID + "\n\n";
+
+                    items.addLast(itemname);
+                    restnames.addLast(restname);
+                    prices.addLast(price);
+                    locations.addLast(location);
+                    imgIDs.addLast(imgID);
                 }
-                feed.setText(data);
+                //feed.setText(items.toString());
+                //Toast.makeText(getContext(), String.valueOf(items.size()), Toast.LENGTH_LONG).show();
+                mAdapter.notifyDataSetChanged();
+                /*mAdapter = new WordListAdapter(getContext(),items,restnames,prices,locations,imgIDs);
+                mRecyclerView.setAdapter(mAdapter);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));*/
             }
         });
+        //feed.setText(items.toString());
+
 
     }
 
@@ -149,6 +220,12 @@ public class FeedFragment extends Fragment {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         String data = "";
+                        items.clear();
+                        restnames.clear();
+                        prices.clear();
+                        locations.clear();
+                        imgIDs.clear();
+
 
                         for(QueryDocumentSnapshot post : queryDocumentSnapshots) {
                             String id = post.getId();
@@ -161,7 +238,6 @@ public class FeedFragment extends Fragment {
                                 imgID = post.get("img").toString();
                             }
 
-
                             ArrayList<String> temp = new ArrayList<>();
                             temp.add(id); temp.add(imgID);
                             postList.add(temp);
@@ -171,8 +247,18 @@ public class FeedFragment extends Fragment {
                                     + "\nPrice: " + price
                                     + "\nLocation: " + location
                                     + "\nImgID: " + imgID + "\n\n";
+
+                            items.addLast(itemname);
+                            restnames.addLast(restname);
+                            prices.addLast(price);
+                            locations.addLast(location);
+                            imgIDs.addLast(imgID);
                         }
-                        feed.setText(data);
+                        //feed.setText(items.toString());
+                        //Toast.makeText(getContext(), String.valueOf(items.size()), Toast.LENGTH_LONG).show();
+                        mAdapter.notifyDataSetChanged(); //= new WordListAdapter(getContext(),items,restnames,prices,locations,imgIDs);
+                        //mRecyclerView.setAdapter(mAdapter);
+                        //mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -283,25 +369,39 @@ public class FeedFragment extends Fragment {
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         String data = "";
 
-                        for(QueryDocumentSnapshot post : queryDocumentSnapshots)    {
-                            Map<String,Object> postmap = post.getData();
-                            String itemname = postmap.get("itemname").toString();
+                        for(QueryDocumentSnapshot post : queryDocumentSnapshots) {
+                            String id = post.getId();
+                            String itemname = post.get("itemname").toString();
                             String restname = post.get("restname").toString();
                             String price = post.get("price").toString();
                             String location = post.get("loc").toString();
-                            //String imgID = post.get("img").toString();
+                            String imgID = "";
+                            if (post.get("img") != null) {
+                                imgID = post.get("img").toString();
+                            }
+
+                            ArrayList<String> temp = new ArrayList<>();
+                            temp.add(id); temp.add(imgID);
+                            postList.add(temp);
 
                             data += "Item Name: " + itemname
                                     + "\nFood Spot Name: " + restname
                                     + "\nPrice: " + price
-                                    + "\nLocation: " + location;
-                                    //+ "\nImgID: " + imgID;
+                                    + "\nLocation: " + location
+                                    + "\nImgID: " + imgID + "\n\n";
+
+                            items.addLast(itemname);
+                            restnames.addLast(restname);
+                            prices.addLast(price);
+                            locations.addLast(location);
+                            imgIDs.addLast(imgID);
                         }
-                        feed.setText(data);
+                        //feed.setText(data);
 
                         Toast.makeText(getContext(), "Load Posts Success?!", Toast.LENGTH_LONG).show();
                     }
                 });
+
     }
 
 }

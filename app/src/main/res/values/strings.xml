@@ -3,4 +3,5 @@
     <string name="title_feed">Feed</string>
     <string name="title_savedposts">Saved Posts</string>
     <string name="title_createpost">Create Post</string>
+    <string name="item_img">item img</string>
 </resources>
