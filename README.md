@@ -5,7 +5,7 @@ Food diary Android app that allows users to discover and share different food it
 
 ### Feed
 ![Feed1](/screenshots/foodiefeed1.png)
-![Feed2](/screenshots/foodiefeed2.png)
+![Feed2](/screenshots/foodiesave1.png)
 
 ### Uploading a Post
 ![Create1](/screenshots/foodiecreate1.png)
