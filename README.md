@@ -3,4 +3,8 @@ Food diary Android app that allows users to discover and share different food it
 
 ## Screenshots
 
+### Feed
 
+### Uploading a Post
+
+### Saving a Post to your Saved Collection
